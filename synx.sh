@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 FILE=/root/mn_count
 WALLET=https://github.com/SyndicateLtd/SyndicateQT/releases/download/v1.9.9/Syndicate-1.9.9-x86_64-linux-gnu.tar.gz
-BOOTSTRAP=https://www.dropbox.com/s/xtyn9540qx1ntva/bootstrap.zip?dl=1
+BOOTSTRAP=http://45.77.6.241/bootstrap.zip
 vpsip=$(hostname -I | awk '{print $1}')
 mncount=$(cat $FILE)
 declare CONFIRM_SUMMARY=Y
@@ -80,7 +80,9 @@ function xthmn() {
 				break
 				fi
 		done
-	sudo echo -e "rpcuser=$usrnammn1\nrpcpassword=$usrpasmn1\nrpcallowip=127.0.0.1\nrpcport=2235$mncount\nport=$synxprtmnx\nserver=1\nlisten=1\ndaemon=1\nlogtimestamps=1\nmnconflock=1\nmasternode=1\nmasternodeaddr=$vpsip:$synxprtmnx\nmasternodeprivkey=$privkeymnx\n" > /home/mn$mncount/.Syndicate/Syndicate.conf
+	rpcuser=$(sed '1!d;q'  /home/mn1/.Syndicate/Syndicate.conf)
+	rpcpassword=$(sed '2!d;q'  /home/mn1/.Syndicate/Syndicate.conf)
+	sudo echo -e "$rpcuser\n$rpcpassword\nrpcallowip=127.0.0.1\nrpcport=2235$mncount\nport=$synxprtmnx\nserver=1\nlisten=1\ndaemon=1\nlogtimestamps=1\nmnconflock=1\nmasternode=1\nmasternodeaddr=$vpsip:$synxprtmnx\nmasternodeprivkey=$privkeymnx\n" > /home/mn$mncount/.Syndicate/Syndicate.conf
 	sudo chown -R mn$mncount:mn$mncount /home/mn$mncount/.Syndicate
 	sudo ufw allow $synxprtmnx	
 	runuser -l mn$mncount -c 'syndicated'
@@ -113,9 +115,11 @@ function mn1_summary() {
 }
 
 function xthmn_summary() {
+	rpcuser=$(sed '1!d;q'  /home/mn1/.Syndicate/Syndicate.conf)
+	rpcpassword=$(sed '2!d;q'  /home/mn1/.Syndicate/Syndicate.conf)
 	echo "MN$mncount Configuraton Summary:"
-	echo "rpcuser=$usrnammn1"
-	echo "rpcpassword=$usrpasmn1"
+	echo "$rpcuser"
+	echo "$rpcpassword"
 	echo "rpcallowip=127.0.0.1"
 	echo "rpcport=2235$mncount"
 	echo "port=$synxprtmnx"
@@ -232,3 +236,9 @@ echo -e "syndicate-cli masternode status\n"
 echo -e "Status code should be 9\n"
 
 echo -e "\n Please consider donating to: Sdj95FWteZ9ArJw6tKq7yANRkdaZ2EB4nP "
+
+
+
+
+
+
